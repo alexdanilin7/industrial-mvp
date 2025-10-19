@@ -1,0 +1,99 @@
+<!-- templates/partials/dashboard_content.html -->
+{% if not enterprises_count %}
+  <div class="alert alert-info">
+    <h4>Нет данных</h4>
+    <p>Загрузите данные через <a href="{% url 'excel_upload_page' %}">панель администратора</a>.</p>
+  </div>
+{% else %}
+  <!-- KPI карточки -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">{{ enterprises_count }}</h5>
+          <p class="card-text">Предприятий</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-success">
+        <div class="card-body">
+          <h5 class="card-title">{{ total_revenue|floatformat:0 }} млн ₽</h5>
+          <p class="card-text">Выручка ({{ selected_year|default:"2022-2024" }})</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-warning">
+        <div class="card-body">
+          <h5 class="card-title">{{ total_staff }}</h5>
+          <p class="card-text">Занятость</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-info">
+        <div class="card-body">
+          <h5 class="card-title">{{ export_volume|floatformat:0 }} млн ₽</h5>
+          <p class="card-text">Экспорт</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- В начале контента -->
+<div id="dashboard-data"
+     data-revenue-by-industry='{{ revenue_by_industry|safe }}'
+     data-staff-by-district='{{ staff_by_district|safe }}'>
+</div>
+  <!-- Графики -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Выручка по отраслям</div>
+        <div class="card-body">
+          <canvas id="revenueByIndustryChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Занятость по районам</div>
+        <div class="card-body">
+          <canvas id="staffByDistrictChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Таблица предприятий -->
+  <div class="card mt-4">
+    <div class="card-header">Топ-10 предприятий по выручке</div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Наименование</th>
+              <th>ИНН</th>
+              <th>Отрасль</th>
+              <th>Выручка, млн ₽</th>
+              <th>Численность</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ent in top_enterprises %}
+              <tr>
+                <td>{{ ent.name }}</td>
+                <td>{{ ent.inn }}</td>
+                <td>{{ ent.main_industry }}</td>
+                <td>{{ ent.total_revenue|floatformat:0 }}</td>
+                <td>{{ ent.total_staff }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endif %}
+

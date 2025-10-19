@@ -1,0 +1,25 @@
+<!-- templates/login_form_partial.html -->
+<div id="login-form-container">
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+  <div class="mb-3">
+    <label for="username" class="form-label">Логин</label>
+    <input type="text" class="form-control" id="username" name="username" value="{{ form.username.value|default:'' }}" required>
+    {% if form.username.errors %}
+      <div class="text-danger">{{ form.username.errors }}</div>
+    {% endif %}
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Пароль</label>
+    <input type="password" class="form-control" id="password" name="password" required>
+    {% if form.password.errors %}
+      <div class="text-danger">{{ form.password.errors }}</div>
+    {% endif %}
+  </div>
+  <div class="d-grid">
+    <button type="submit" class="btn btn-primary">Войти</button>
+  </div>
+</div>

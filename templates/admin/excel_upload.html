@@ -1,0 +1,150 @@
+<!-- templates/admin/excel_upload.html -->
+{% extends 'base.html' %}
+
+{% block title %}Загрузка Excel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <!-- Левое меню (как в dashboard) -->
+    {% include 'admin/partials/sidebar.html' %}
+
+    <!-- Основной контент -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+      <ul class="nav nav-tabs mb-3" id="uploadTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="generate-tab" data-bs-toggle="tab" data-bs-target="#generate"
+                  type="button">Сгенерировать шаблон
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button">Загрузить
+            файл
+          </button>
+        </li>
+      </ul>
+<div class="tab-content" id="uploadTabContent">
+      <h2>Генерация шаблона Excel</h2>
+      <p>Выберите блоки данных, которые должны быть включены в шаблон:</p>
+    <div class="tab-pane fade show active" id="generate" role="tabpanel">
+      <form id="template-form" action="{% url 'generate_excel_template' %}" method="post">
+        {% csrf_token %}
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="models" value="enterprise" id="enterprise" checked>
+              <label class="form-check-label" for="enterprise">
+                <strong>Основная информация о компании</strong>
+              </label>
+              <div class="text-muted small">ИНН, наименование, адреса, руководство, статусы</div>
+            </div>
+
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="models" value="financial_kpi" id="financial_kpi" checked>
+              <label class="form-check-label" for="financial_kpi">
+                <strong>Финансовые показатели</strong>
+              </label>
+              <div class="text-muted small">Выручка, прибыль, численность, налоги, инвестиции (по годам)</div>
+            </div>
+
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="models" value="property_info" id="property_info">
+              <label class="form-check-label" for="property_info">
+                <strong>Имущественно-земельный комплекс</strong>
+              </label>
+              <div class="text-muted small">Кадастровые номера, площади, собственность</div>
+            </div>
+
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="models" value="product_info" id="product_info">
+              <label class="form-check-label" for="product_info">
+                <strong>Продукция и экспорт</strong>
+              </label>
+              <div class="text-muted small">Виды продукции, ОКПД2, госзаказ, экспорт</div>
+            </div>
+
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="models" value="geo_location" id="geo_location">
+              <label class="form-check-label" for="geo_location">
+                <strong>Географические данные</strong>
+              </label>
+              <div class="text-muted small">Координаты, округ, район</div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Скачать шаблон Excel</button>
+      </form>
+    </div>
+      <div id="result" class="mt-3"></div>
+
+  <!-- Вкладка: Загрузка файла -->
+  <div class="tab-pane fade" id="upload" role="tabpanel">
+    <h3>Загрузка данных из Excel</h3>
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_excel_file' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="excelFile" class="form-label">Выберите Excel-файл</label>
+        <input class="form-control" type="file" id="excelFile" name="file" accept=".xlsx" required>
+      </div>
+      <button type="submit" class="btn btn-success">Загрузить данные</button>
+    </form>
+
+    {% if report %}
+      <div class="mt-4">
+        <h4>Результат загрузки:</h4>
+        {% if report.errors %}
+          <div class="alert alert-danger">
+            <h5>Ошибки:</h5>
+            <ul>
+              {% for error in report.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if report.success %}
+          <div class="alert alert-success">
+            <h5>Успешно обработано:</h5>
+            <ul>
+              {% for msg in report.success|slice:":10" %}
+                <li>{{ msg }}</li>
+              {% endfor %}
+              {% if report.success|length > 10 %}
+                <li>... и ещё {{ report.success|length|add:"-10" }} записей</li>
+              {% endif %}
+            </ul>
+          </div>
+        {% endif %}
+        <div class="card">
+          <div class="card-body">
+            <h5>Сводка по листам:</h5>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Лист</th>
+                  <th>Успешно</th>
+                  <th>Ошибки</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sheet, stats in report.summary.items %}
+                  <tr>
+                    <td>{{ sheet }}</td>
+                    <td class="text-success">{{ stats.processed }}</td>
+                    <td class="text-danger">{{ stats.errors }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+{% endblock %}

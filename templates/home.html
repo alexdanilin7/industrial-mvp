@@ -1,0 +1,45 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+{%load static%}
+{% block title %}Дашборды{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Фильтры -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <select class="form-select" id="industry-filter" hx-get="{% url 'home' %}" hx-target="#dashboard-content" hx-include="[name='year'], [name='district']">
+        <option value="">Все отрасли</option>
+        {% for ind in industries %}
+          <option value="{{ ind }}" {% if selected_industry == ind %}selected{% endif %}>{{ ind }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select class="form-select" name="district" hx-get="{% url 'home' %}" hx-target="#dashboard-content" hx-include="[name='industry-filter'], [name='year']">
+        <option value="">Все районы</option>
+        {% for dist in districts %}
+          <option value="{{ dist }}" {% if selected_district == dist %}selected{% endif %}>{{ dist }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select class="form-select" name="year" hx-get="{% url 'home' %}" hx-target="#dashboard-content" hx-include="[name='industry-filter'], [name='district']">
+        <option value="">Все годы</option>
+        <option value="2022" {% if selected_year == "2022" %}selected{% endif %}>2022</option>
+        <option value="2023" {% if selected_year == "2023" %}selected{% endif %}>2023</option>
+        <option value="2024" {% if selected_year == "2024" %}selected{% endif %}>2024</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Контент дашборда -->
+  <div id="dashboard-content">
+    {% include 'partials/dashboard_content.html' %}
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

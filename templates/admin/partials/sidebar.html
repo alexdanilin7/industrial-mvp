@@ -1,0 +1,32 @@
+<!-- templates/admin/partials/sidebar.html -->
+<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+  <div class="position-sticky pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
+           href="{% url 'admin_dashboard' %}">
+          Информация
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'excel_upload_page' %}active{% endif %}"
+           href="{% url 'excel_upload_page' %}">
+          Загрузка Excel
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'excel_upload_page' %}active{% endif %}"
+           href="{% url 'excel_upload_page' %}">
+          Загрузка используя заготовленный шаблон формы
+        </a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'excel_upload_page' %}active{% endif %}"
+           href="{% url 'excel_upload_page' %}">
+          Загрузка по API
+        </a>
+      </li>
+      <!-- Другие пункты позже -->
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,39 @@
+<!-- templates/login_modal.html -->
+<div id="login-overlay" style="...">
+  <div class="bg-white rounded shadow p-4" style="...">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Вход в систему</h5>
+      <button class="btn-close" hx-get="{% url 'home' %}" hx-target="body" hx-swap="outerHTML"></button>
+    </div>
+
+    <!-- Форма с HTMX -->
+    <form
+      hx-post="{% url 'login' %}"
+      hx-target="#login-form-container"
+      hx-swap="outerHTML"
+      id="login-form"
+    >
+      {% csrf_token %}
+      <div id="login-form-container">
+        {{ form.non_field_errors }}
+        <div class="mb-3">
+          <label for="username" class="form-label">Логин</label>
+          <input type="text" class="form-control" id="username" name="username" required autofocus value="adminmvp">
+          {% if form.username.errors %}
+            <div class="text-danger">{{ form.username.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Пароль</label>
+          <input type="password" class="form-control" id="password" name="password" required value="adminmvp">
+          {% if form.password.errors %}
+            <div class="text-danger">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Войти</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
